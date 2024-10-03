@@ -1,0 +1,45 @@
+# Operating system files
+[Dd]ebug/
+[Rr]elease/
+.vscode/
+bin/
+obj/
+*.user
+*.vspscc
+*.suo
+
+# Log files
+*.log
+
+# IDE settings (Visual Studio, Rider)
+.vscode/
+.idea/
+.vs/
+*.sln.docstates
+
+# Output files
+bin/
+obj/
+out/
+
+# Environment configurations
+appsettings*.json
+appsettings*.Development.json
+
+# Dependency files
+*.nuget/
+packages/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Local dependencies
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Git configuration
+*.orig

@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: hwheels_db
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+volumes:
+  postgres-data:
