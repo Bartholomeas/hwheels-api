@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using HWheels.Database;
 using HWheels.Extensions;
 using Microsoft.AspNetCore.Identity;
@@ -5,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ApiDatabase");
-Console.WriteLine(connectionString);
+Console.WriteLine($"Connection string: {connectionString}");
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -21,7 +22,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connect
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -29,6 +30,13 @@ if (app.Environment.IsDevelopment())
 
     app.ApplyMigrations();
 }
+
+app.MapGet("users/me", async (ClaimsPrincipal claims, AppDbContext context) =>
+{
+    string userId = claims.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+    return await context.Users.FindAsync(userId);
+}).RequireAuthorization();
+
 
 app.UseHttpsRedirection();
 
