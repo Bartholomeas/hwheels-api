@@ -3,13 +3,28 @@ using HWheels.Database;
 using HWheels.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ApiDatabase");
-Console.WriteLine($"Connection string: {connectionString}");
 
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(option =>
+{
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "HWheels API", Version = "v1" });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme);
@@ -22,6 +37,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connect
 
 var app = builder.Build();
 
+app.UsePathBase("/api/v1");
 
 if (app.Environment.IsDevelopment())
 {
@@ -31,15 +47,9 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
-app.MapGet("users/me", async (ClaimsPrincipal claims, AppDbContext context) =>
-{
-    string userId = claims.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-    return await context.Users.FindAsync(userId);
-}).RequireAuthorization();
-
-
 app.UseHttpsRedirection();
 
 app.MapIdentityApi<User>();
+app.MapControllers();
 
 app.Run();
