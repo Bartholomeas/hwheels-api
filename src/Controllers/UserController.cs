@@ -6,7 +6,7 @@ namespace HWheels.Controllers;
 
 [Route("api/users")]
 [ApiController]
-public class UsersController(AppDbContext context) : ControllerBase
+public class UserController(AppDbContext context) : ControllerBase
 {
     private readonly AppDbContext _context = context;
 
